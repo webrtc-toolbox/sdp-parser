@@ -1,0 +1,14 @@
+{
+  "include": ["src/**/*"],
+  "compilerOptions": {
+    "outDir": "dist",
+    "strict": true,
+    "module": "CommonJS",
+    "target": "ES5",
+    "moduleResolution": "node",
+    "declaration": true,
+    "declarationMap": true,
+    "declarationDir": "declaration",
+    "skipLibCheck": true
+  }
+}
