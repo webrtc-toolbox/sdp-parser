@@ -1,8 +1,28 @@
-# SDP parser
+# sdp-parser
 
-SDP parsing/printing library, implemented based on the JavaScript Session Establishment Protocol(JSEP).
+sdp-parser is a SDP(Session Description Protocol) parsing/printing library written in TypeScript.
 
-## parsing
+## reference RFCs/protocols
+
+sdp-parser was developed implementing part of these RFCs/protocols:
+
+- RFC 4566 - SDP: Session Description Protocol
+- JavaScript Session Establishment Protocol
+
+## Building
+
+```sh
+yarn build
+```
+
+should yield `dist` dictory, within which are:
+
+- minified JavaScript file `index.js`,
+- source-map file `index.js.map`
+- and TypeScript type definations `sdp-parser.d.ts`.
+
+## Usage
+### parsing
 
 ```javascript
 import { parse } from "sdp-parser";
@@ -10,7 +30,7 @@ import { parse } from "sdp-parser";
 const sessionDescription = parse(sdp);
 ```
 
-## printing
+### printing
 
 ```javascript
 import { print } from "sdp-parser";
@@ -18,24 +38,23 @@ import { print } from "sdp-parser";
 const sdp = print(sessionDescription);
 ```
 
-## munging
+### munging
 
 ```javascript
 import { parse, print } from "sdp-parser";
 
 const sessionDescription = parse(sdp);
 
-sessionDescription
-  .mediaDescription[0]
-  .attributes
-  .ssrcs.push({
-    ssrcId: '1024',
-    attributeName: 'label',
-    attributeValue: 'oTwikEfJsdv0'
+sessionDescription.mediaDescription[0].attributes.ssrcs.push({
+  ssrcId: "1024",
+  attributeName: "label",
+  attributeValue: "oTwikEfJsdv0",
 });
 
 const mungedSdp = print(sessionDescription);
-
 ```
+
 ## roadmap
+
 - [ ] Better error report while parsing
+- [ ] Performance improvements
