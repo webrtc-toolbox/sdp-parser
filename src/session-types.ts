@@ -65,6 +65,7 @@ export interface Attribute {
   attField: string;
   attValue?: string;
   _cur: number;
+  parsed?: any;
 }
 
 export interface MediaDescription {
@@ -76,9 +77,13 @@ export interface MediaDescription {
   attributes: MediaAttributes;
 }
 
+/**
+ * @public
+ * */
 export interface Record {
   type: RECORD_TYPE;
   value: string;
   cur: number;
   line: number;
+  attribute?: Attribute;
 }

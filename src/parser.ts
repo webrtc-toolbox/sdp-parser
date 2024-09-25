@@ -568,6 +568,10 @@ export class Parser extends ParsingBase {
     };
   }
 
+  public getRecords(): Record[] {
+    return this.records;
+  }
+
   private getCurrentRecord(): Record {
     const record = this.records[this.currentLine];
 
@@ -627,6 +631,8 @@ export class Parser extends ParsingBase {
       );
       const attribute: Attribute = { attField, _cur: 0 };
 
+      record.attribute = attribute;
+
       if (record.value[record.cur] === ":") {
         record.cur += 1;
         attribute.attValue = this.extractOneOrMore(record, isByteString);
@@ -654,6 +660,8 @@ export class Parser extends ParsingBase {
         (char) => isTokenChar(char) && char !== ":"
       );
       const attribute: Attribute = { attField, _cur: 0 };
+
+      record.attribute = attribute;
 
       if (record.value[record.cur] === ":") {
         record.cur += 1;
@@ -1199,10 +1207,11 @@ abstract class AttributeParser extends ParsingBase {
       );
     }
 
-    this.attributes.iceUfrag = this.extractOneOrMore(attribute, isICEChar, [
-      4,
-      256,
-    ]);
+    this.attributes.iceUfrag = this.extractOneOrMore(
+      attribute,
+      isICEChar,
+      [4, 256]
+    );
   }
 
   protected parseIcePwd(attribute: Attribute): void {
@@ -1212,10 +1221,11 @@ abstract class AttributeParser extends ParsingBase {
       );
     }
 
-    this.attributes.icePwd = this.extractOneOrMore(attribute, isICEChar, [
-      22,
-      256,
-    ]);
+    this.attributes.icePwd = this.extractOneOrMore(
+      attribute,
+      isICEChar,
+      [22, 256]
+    );
   }
 
   protected parseIceOptions(attribute: Attribute): void {
@@ -1275,6 +1285,8 @@ abstract class AttributeParser extends ParsingBase {
       this.consumeAttributeSpace(attribute);
       map.extensionAttributes = this.extract(attribute, this.consumeTill);
     }
+
+    attribute.parsed = map;
 
     this.attributes.extmaps.push(map);
   }
@@ -1720,17 +1732,21 @@ class MediaAttributeParser extends AttributeParser {
       );
     }
 
+    attribute.parsed = rtpMap;
+
     const payload = this.attributes.payloads.find(
       (payload) => payload.payloadType === parseInt(payloadType, 10)
     );
     if (payload) {
       payload.rtpMap = rtpMap;
     } else {
-      this.attributes.payloads.push({
+      const payload = {
         payloadType: parseInt(payloadType, 10),
         rtpMap,
         rtcpFeedbacks: [],
-      });
+      };
+
+      this.attributes.payloads.push(payload);
     }
   }
 
@@ -1771,16 +1787,23 @@ class MediaAttributeParser extends AttributeParser {
       attributeValue = this.extract(attribute, this.consumeTill);
     }
 
-    const ssrc = this.attributes.ssrcs.find(
+    let ssrc = this.attributes.ssrcs.find(
       (ssrc) => ssrc.ssrcId === parseInt(ssrcId, 10)
     );
+
     if (ssrc) {
       ssrc.attributes[attributeName] = attributeValue;
+
+      attribute.parsed = ssrc;
     } else {
-      this.attributes.ssrcs.push({
+      ssrc = {
         ssrcId: parseInt(ssrcId, 10),
         attributes: { [attributeName]: attributeValue },
-      });
+      };
+
+      this.attributes.ssrcs.push(ssrc);
+
+      attribute.parsed = ssrc;
     }
   }
 
@@ -1802,6 +1825,8 @@ class MediaAttributeParser extends AttributeParser {
         parameters[key] = trueValue;
       }
     });
+
+    attribute.parsed = { parameters };
 
     const payload = this.attributes.payloads.find(
       (payload) => payload.payloadType === parseInt(format, 10)
@@ -1877,6 +1902,8 @@ class MediaAttributeParser extends AttributeParser {
         }
         break;
     }
+
+    attribute.parsed = rtcpFeedback;
 
     if (payloadType === "*") {
       this.attributes.rtcpFeedbackWildcards.push(rtcpFeedback);
@@ -2057,10 +2084,11 @@ class MediaAttributeParser extends AttributeParser {
   }
 
   private parseSctpPort(attribute: Attribute) {
-    this.attributes.sctpPort = this.extractOneOrMore(attribute, isDigit, [
-      1,
-      5,
-    ]);
+    this.attributes.sctpPort = this.extractOneOrMore(
+      attribute,
+      isDigit,
+      [1, 5]
+    );
   }
 
   private parseMaxMessageSize(attribute: Attribute) {
@@ -2093,6 +2121,10 @@ class MediaAttributeParser extends AttributeParser {
       }
     }
 
-    this.attributes.ssrcGroups.push({ semantic, ssrcIds });
+    const group = { semantic, ssrcIds };
+
+    attribute.parsed = group;
+
+    this.attributes.ssrcGroups.push(group);
   }
 }

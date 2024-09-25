@@ -24,6 +24,8 @@ export interface Attribute {
     _cur: number;
     // (undocumented)
     ignored?: boolean;
+    // (undocumented)
+    parsed?: any;
 }
 
 // @public (undocumented)
@@ -275,6 +277,8 @@ export function parse(sdp: string): SessionDescription;
 export class Parser extends ParsingBase {
     constructor();
     // (undocumented)
+    getRecords(): Record_2[];
+    // (undocumented)
     parse(sdp: string): SessionDescription;
 }
 
@@ -305,6 +309,8 @@ export class Printer {
 
 // @public (undocumented)
 interface Record_2 {
+    // (undocumented)
+    attribute?: Attribute;
     // (undocumented)
     cur: number;
     // (undocumented)
