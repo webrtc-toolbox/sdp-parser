@@ -1,6 +1,6 @@
 {
-  "name": "sdp-parser",
-  "version": "1.0.0",
+  "name": "@webrtc-toolbox/sdp-parser",
+  "version": "1.0.1",
   "description": "SDP parsing/printing library, implemented based on the JavaScript Session Establishment Protocol(JSEP).",
   "main": "./dist/index.js",
   "types": "./dist/sdp-parser.d.ts",

@@ -599,14 +599,18 @@ export class Parser extends ParsingBase {
   private parseLine(line: string, index: number): Record {
     if (line.length < 2) {
       throw new Error(
-        "Invalid sdp line, sdp line should be of form <type>=<value>."
+        `Invalid sdp line, sdp line should be of form <type>=<value>, at line ${
+          index + 1
+        }.`
       );
     }
     const type = line[0] as RECORD_TYPE;
 
     if (line[1] !== "=") {
       throw new Error(
-        `Invalid sdp line, <type> should be a single character followed by an "=" sign.`
+        `Invalid sdp line, <type> should be a single character followed by an "=" sign, at line ${
+          index + 1
+        } `
       );
     }
 
@@ -629,7 +633,7 @@ export class Parser extends ParsingBase {
         record,
         (char) => isTokenChar(char) && char !== ":"
       );
-      const attribute: Attribute = { attField, _cur: 0 };
+      const attribute: Attribute = { attField, _cur: 0, line: record.line };
 
       record.attribute = attribute;
 
@@ -659,7 +663,7 @@ export class Parser extends ParsingBase {
         record,
         (char) => isTokenChar(char) && char !== ":"
       );
-      const attribute: Attribute = { attField, _cur: 0 };
+      const attribute: Attribute = { attField, _cur: 0, line: record.line };
 
       record.attribute = attribute;
 
@@ -812,7 +816,9 @@ export class Parser extends ParsingBase {
     const record = this.getCurrentRecord();
 
     if (record.type !== RECORD_TYPE.VERSION) {
-      throw new Error("first sdp record must be version");
+      throw new Error(
+        `first sdp record must be version, at line ${record.line}`
+      );
     }
 
     const version = record.value.slice(
@@ -1015,7 +1021,7 @@ export class Parser extends ParsingBase {
         const attributes = this.parseMediaAttributes(media);
         // const attributeMap = this.parseAttributeMap(attributes);
 
-        mediaDescriptions.push({
+        const mediaDescription: MediaDescription = {
           media,
           information,
           connections,
@@ -1023,7 +1029,11 @@ export class Parser extends ParsingBase {
           key,
           attributes,
           // attributeMap,
-        });
+        };
+
+        record.parsed = media;
+
+        mediaDescriptions.push(mediaDescription);
       } else {
         break;
       }
@@ -1366,10 +1376,18 @@ class SessionAttributeParser extends AttributeParser {
           this.attributes.unrecognized.push(attribute);
       }
     } catch (e) {
-      console.error(
-        `parsing session attribute ${attribute.attField} error, "a=${attribute.attField}:${attribute.attValue}"`
-      );
-      throw e;
+      const errorMsg = `parsing session attribute ${
+        attribute.attField
+      } error, "a=${attribute.attField}:${attribute.attValue}"; ${
+        e instanceof Error && e.message
+      }; at line:${attribute.line}, col:${attribute._cur} `;
+
+      throw new Error(errorMsg);
+
+      // console.error(
+
+      // );
+      // throw e;
     }
 
     if (!attribute.ignored && attribute.attValue && !this.atEnd(attribute)) {
@@ -1604,7 +1622,9 @@ class MediaAttributeParser extends AttributeParser {
       }
     } catch (e) {
       console.error(
-        `parsing media attribute ${attribute.attField} error, "a=${attribute.attField}:${attribute.attValue}"`
+        `parsing media attribute ${attribute.attField} error, "a=${
+          attribute.attField
+        }:${attribute.attValue}", at line ${attribute.line + 1}`
       );
       throw e;
     }

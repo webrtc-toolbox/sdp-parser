@@ -66,6 +66,7 @@ export interface Attribute {
   attValue?: string;
   _cur: number;
   parsed?: any;
+  line: number;
 }
 
 export interface MediaDescription {
@@ -86,4 +87,18 @@ export interface Record {
   cur: number;
   line: number;
   attribute?: Attribute;
+  // parsed?: ParsedType<this['type']>;
+  parsed?: any;
 }
+
+// type ParsedType<T> =
+//   T extends RECORD_TYPE.MEDIA ? MediaDescription :
+//   T extends RECORD_TYPE.EMAIL ? string :
+//   T extends RECORD_TYPE.PHONE ? string :
+//   T extends RECORD_TYPE.ATTRIBUTE ? Attribute :
+//   never;
+
+// interface ParsedType {
+//   [RECORD_TYPE.MEDIA]: MediaDescription,
+//   [RECORD_TYPE.BANDWIDTH]: string
+// }
