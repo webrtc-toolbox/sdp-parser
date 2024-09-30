@@ -1621,12 +1621,13 @@ class MediaAttributeParser extends AttributeParser {
           this.attributes.unrecognized.push(attribute);
       }
     } catch (e) {
-      console.error(
-        `parsing media attribute ${attribute.attField} error, "a=${
-          attribute.attField
-        }:${attribute.attValue}", at line ${attribute.line + 1}`
-      );
-      throw e;
+      const errorMsg = `parsing media attribute ${
+        attribute.attField
+      } error, "a=${attribute.attField}:${attribute.attValue}"; ${
+        e instanceof Error && e.message
+      }; at line:${attribute.line + 1}, col:${attribute._cur} `;
+
+      throw new Error(errorMsg);
     }
 
     if (!attribute.ignored && attribute.attValue && !this.atEnd(attribute)) {
