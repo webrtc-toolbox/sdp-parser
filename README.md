@@ -14,7 +14,7 @@ sdp-parser was developed implementing part of these RFCs/protocols:
 ```sh
 npm install @webrtc-toolbox/sdp-parser
 
-// or if using yarn
+// or using yarn
 yarn add @webrtc-toolbox/sdp-parser
 ```
 
