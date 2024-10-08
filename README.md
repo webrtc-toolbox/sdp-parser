@@ -34,7 +34,7 @@ should yield `dist` dictory, within which are:
 ### parsing
 
 ```javascript
-import { parse } from "sdp-parser";
+import { parse } from "@webrtc-toolbox/sdp-parser";
 
 const sessionDescription = parse(sdp);
 ```
@@ -42,7 +42,7 @@ const sessionDescription = parse(sdp);
 ### printing
 
 ```javascript
-import { print } from "sdp-parser";
+import { print } from "@webrtc-toolbox/sdp-parser";
 
 const sdp = print(sessionDescription);
 ```
@@ -50,7 +50,7 @@ const sdp = print(sessionDescription);
 ### munging
 
 ```javascript
-import { parse, print } from "sdp-parser";
+import { parse, print } from "@webrtc-toolbox/sdp-parser";
 
 const sessionDescription = parse(sdp);
 
