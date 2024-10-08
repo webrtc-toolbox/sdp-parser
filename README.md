@@ -9,6 +9,15 @@ sdp-parser was developed implementing part of these RFCs/protocols:
 - RFC 4566 - SDP: Session Description Protocol
 - JavaScript Session Establishment Protocol
 
+## Installation
+
+```sh
+npm install @webrtc-toolbox/sdp-parser
+
+// or if using yarn
+yarn add @webrtc-toolbox/sdp-parser
+```
+
 ## Building
 
 ```sh
